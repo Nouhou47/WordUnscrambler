@@ -54,7 +54,18 @@ namespace WordUnscrambler
                     if (doWordsMatched(scrambledWord, unscrambledWord)) {
                         matchedWords.Add(unscrambledWord);
                     } else {
-                        
+                         /**
+                            * Before doing this test, we must be sure
+                             that the both words have the same length.
+                        */
+                        if( scrambledWord.Length == unscrambledWord.Length ) {
+                            char[] arr1 = scrambledWord.ToCharArray();
+                            char[] arr2 = unscrambledWord.ToCharArray();
+
+                            Array.Sort(arr1);
+                            Array.Sort(arr2);
+
+                            if (areCharsArraySame(arr1, arr2)) matchedWords.Add(unscrambledWord);
                     }
                 }
             }
@@ -76,7 +87,18 @@ namespace WordUnscrambler
 
         }
 
-
+        // This helper method compares two arrays of char.
+        static bool areCharsArraySame(char[] arr1, char[] arr2) {
+            bool response = false;
+            for (int i = 0; i < arr1.Length; i++) {
+                if (arr1[i] != arr2[i]) {
+                    response = false;
+                } else {
+                    response = true;
+                }
+            }
+            return response;
+        }
 
         // This helper method is used to lowercase and compare to given strings.
         static bool doWordsMatched(string scrambledWord, string unscrambledWord)

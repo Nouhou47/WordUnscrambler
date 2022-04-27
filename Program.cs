@@ -4,6 +4,9 @@ namespace WordUnscrambler
 {
     class Program
     {
+        private const bool V = true;
+        private const bool F = false;
+
         static void Main(String[] args) 
         {
             Console.WriteLine("Hello world!");
@@ -16,11 +19,34 @@ namespace WordUnscrambler
             String commaSeparatedWords = "";
             String[] commaSeparatedWordsArray;
             List<string> userScrambledWords = new List<string>();
+            var loadedWords = new List<string>();
+            string filePath = "";
+
             switch (option)
             {
                 case 'f':
                     Console.WriteLine("You gonna provide a file!");
                     Console.Write("Enter the file path: ");
+
+                    filePath = Console.ReadLine() ?? "";
+                    
+                    if(!filePath.Equals("")) { // We first test if the file path is not null.
+                        if(File.Exists(filePath)) { // We then verified if the file exists.
+                            foreach (var line in File.ReadLines(filePath))
+                            {
+                                loadedWords.Add(line);
+                            }
+                        } else
+                        {
+                            Console.WriteLine("The file to load doesnt exists at the path: " + filePath);
+                            break;
+                        }
+                    }
+
+                    Console.WriteLine("The loaded words now are: ");
+                    foreach(var word in loadedWords) {
+                        Console.WriteLine(word);
+                    }
                     break;
 
                 case 'm':
@@ -41,7 +67,7 @@ namespace WordUnscrambler
                     Console.WriteLine("No such option! Type *F* or *M*");
                     break;
             }
-            var loadedWords = File.ReadAllLines("./wordsList.txt");
+            loadedWords = File.ReadAllLines("./wordsList.txt").ToList();
 
             //Console.WriteLine("\nThe loaded words are: ");
             // printListItems(loadedWords);
@@ -49,16 +75,21 @@ namespace WordUnscrambler
             // This list will store words that matches.
             var matchedWords = new List<string>();
 
-            foreach(var scrambledWord in userScrambledWords) {
-                foreach(var unscrambledWord in loadedWords) {
-                    if (doWordsMatched(scrambledWord, unscrambledWord)) {
+            foreach(var scrambledWord in userScrambledWords)
+            {
+                foreach(var unscrambledWord in loadedWords)
+                {
+                    if (doWordsMatched(scrambledWord, unscrambledWord))
+                    {
                         matchedWords.Add(unscrambledWord);
-                    } else {
+                    } else
+                    {
                          /**
                             * Before doing this test, we must be sure
                              that the both words have the same length.
                         */
-                        if( scrambledWord.Length == unscrambledWord.Length ) {
+                        if( scrambledWord.Length == unscrambledWord.Length )
+                        {
                             char[] arr1 = scrambledWord.ToCharArray();
                             char[] arr2 = unscrambledWord.ToCharArray();
 
@@ -66,36 +97,22 @@ namespace WordUnscrambler
                             Array.Sort(arr2);
 
                             if (areCharsArraySame(arr1, arr2)) matchedWords.Add(unscrambledWord);
+                        }
                     }
                 }
             }
-
             Console.WriteLine("Words that mathes are: ");
             printListItems(matchedWords);
-
-           /*  Console.WriteLine("Test test test: ");
-            string de = "gexa";
-            Console.WriteLine("Before sort: "+ de);
-            char[] dec = de.ToCharArray();
-
-             Array.Sort(dec);
-            foreach(var item in dec) {
-                Console.WriteLine("After sort: " + item);
-            } */
-
-
-
         }
 
         // This helper method compares two arrays of char.
-        static bool areCharsArraySame(char[] arr1, char[] arr2) {
-            bool response = false;
-            for (int i = 0; i < arr1.Length; i++) {
-                if (arr1[i] != arr2[i]) {
-                    response = false;
-                } else {
-                    response = true;
-                }
+        static bool areCharsArraySame(char[] arr1, char[] arr2)
+        {
+            bool response = F;
+            for (int i = 0; i < arr1.Length; i++)
+            {
+                if (arr1[i] != arr2[i]) response = F;
+                else response = V;
             }
             return response;
         }
